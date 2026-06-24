@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Design System — SonicWall ZTP</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --color-bg: #f8f9fa;
+    --color-surface: #ffffff;
+    --color-surface-subtle: #ececf0;
+    --color-text: #1a1a1a;
+    --color-text-muted: #717182;
+    --color-accent: #0066cc;
+    --color-accent-hover: #0052a6;
+    --color-border: rgba(0, 0, 0, 0.1);
+    --color-nav: #001b50;
+    --color-nav-accent: #ff5d00;
+    --color-nav-icon-idle: #c4d1e5;
+    --color-nav-hover: #d4e3f9;
+    --color-success: #16a34a;
+    --color-warning: #d97706;
+    --color-error: #d4183d;
+    --color-info: #0066cc;
+
+    --font-display: "Inter", system-ui, sans-serif;
+    --font-body: "Inter", system-ui, sans-serif;
+    --text-display: 1.875rem;
+    --text-h1: 1.5rem;
+    --text-h2: 1.25rem;
+    --text-h3: 1.125rem;
+    --text-body: 1rem;
+    --text-small: 0.8125rem;
+    --text-micro: 0.6875rem;
+    --leading-tight: 1.25;
+    --leading-normal: 1.5;
+
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+    --radius-full: 9999px;
+
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.12);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    line-height: var(--leading-normal);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: var(--space-2xl) var(--space-lg); }
+  header.page { margin-bottom: var(--space-2xl); }
+  header.page h1 {
+    font-family: var(--font-display);
+    font-size: var(--text-display);
+    font-weight: 700;
+    line-height: var(--leading-tight);
+    margin: 0 0 var(--space-sm);
+  }
+  header.page p { color: var(--color-text-muted); margin: 0; max-width: 60ch; }
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: var(--text-small);
+    color: var(--color-accent);
+    font-weight: 600;
+    margin: 0 0 var(--space-sm);
+  }
+
+  section { margin-bottom: var(--space-2xl); }
+  section > h2 {
+    font-family: var(--font-display);
+    font-size: var(--text-h2);
+    font-weight: 700;
+    margin: 0 0 var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* color swatches */
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-md); }
+  .swatch { border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; background: var(--color-surface); }
+  .swatch .chip { height: 72px; }
+  .swatch .meta { padding: var(--space-sm) var(--space-md); }
+  .swatch .name { font-weight: 600; font-size: 0.9rem; }
+  .swatch .hex { color: var(--color-text-muted); font-size: var(--text-small); font-family: ui-monospace, monospace; }
+  .swatch .use { color: var(--color-text-muted); font-size: var(--text-small); margin-top: 2px; }
+
+  /* nav preview — 60px icon-only rail matching the prototype */
+  .shell { display: flex; border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); height: 620px; }
+  .nav-rail { background: var(--color-nav); width: 60px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; overflow-y: auto; overflow-x: hidden; }
+  .nav-logo { display: flex; align-items: center; justify-content: center; height: 50px; width: 60px; flex-shrink: 0; }
+  .nav-tab { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 52px; cursor: pointer; flex-shrink: 0; background: var(--color-nav); }
+  .nav-tab .bar { position: absolute; left: 0; top: 13px; bottom: 13px; width: 3px; background: var(--color-nav-accent); border-radius: 0 2px 2px 0; opacity: 0; }
+  .nav-tab.active .bar { opacity: 1; }
+  .nav-tab svg { width: 24px; height: 24px; }
+  .nav-tab svg path, .nav-tab svg ellipse, .nav-tab svg rect, .nav-tab svg circle, .nav-tab svg polygon { fill: var(--color-nav-icon-idle); }
+  .nav-tab.active svg path, .nav-tab.active svg ellipse, .nav-tab.active svg rect, .nav-tab.active svg circle, .nav-tab.active svg polygon { fill: var(--color-nav-accent); }
+  .nav-tab .ztc-label { position: absolute; font-family: var(--font-body); font-size: 10px; font-weight: 700; color: var(--color-nav-icon-idle); letter-spacing: 0; line-height: 1; pointer-events: none; }
+  .nav-tab.active .ztc-label { color: var(--color-nav-accent); }
+  .nav-tab .tip { position: absolute; left: calc(100% + 8px); background: #111827; color: #fff; font-size: 11px; line-height: 1.4; padding: 4px 10px; border-radius: 4px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 10; font-family: var(--font-body); }
+  .nav-tab:hover .tip { opacity: 1; }
+  .nav-content { flex: 1; background: var(--color-bg); padding: var(--space-lg); overflow-y: auto; }
+
+  /* type specimens */
+  .type-row { padding: var(--space-md) 0; border-bottom: 1px solid var(--color-border); }
+  .type-row:last-child { border-bottom: none; }
+  .type-label { font-size: var(--text-small); color: var(--color-text-muted); font-family: ui-monospace, monospace; margin-bottom: var(--space-xs); }
+  .d-display { font-family: var(--font-display); font-size: var(--text-display); font-weight: 700; line-height: var(--leading-tight); }
+  .d-h1 { font-family: var(--font-display); font-size: var(--text-h1); font-weight: 700; line-height: var(--leading-tight); letter-spacing: -0.0036em; }
+  .d-h2 { font-family: var(--font-display); font-size: var(--text-h2); font-weight: 700; }
+  .d-h3 { font-family: var(--font-display); font-size: var(--text-h3); font-weight: 700; }
+  .d-body { font-size: var(--text-body); max-width: 60ch; }
+  .d-small { font-size: var(--text-small); color: var(--color-text-muted); }
+  .d-micro { font-size: var(--text-micro); font-weight: 600; text-transform: uppercase; letter-spacing: 0.01em; color: var(--color-text-muted); }
+
+  /* spacing scale */
+  .space-scale { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .space-item { display: flex; align-items: center; gap: var(--space-md); }
+  .space-item .bar { background: var(--color-accent); height: 16px; border-radius: var(--radius-sm); }
+  .space-item .tag { font-family: ui-monospace, monospace; font-size: var(--text-small); color: var(--color-text-muted); min-width: 120px; }
+
+  /* radius + shadow */
+  .box-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-lg); }
+  .demo-box { background: var(--color-surface); border: 1px solid var(--color-border); padding: var(--space-lg); text-align: center; font-size: var(--text-small); color: var(--color-text-muted); }
+
+  /* status badges */
+  .badge-row { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+  .badge { display: inline-flex; align-items: center; font-size: var(--text-micro); font-weight: 600; letter-spacing: 0; text-transform: none; padding: 3px 8px; border-radius: var(--radius-md); }
+  .badge.success { background: #16a34a1a; color: var(--color-success); }
+  .badge.warning { background: #d977061a; color: var(--color-warning); }
+  .badge.error { background: #d4183d1a; color: var(--color-error); }
+  .badge.info { background: #0066cc1a; color: var(--color-info); }
+  .badge.neutral { background: var(--color-surface-subtle); border: 1px solid var(--color-border); color: var(--color-text-muted); font-weight: 600; }
+  .badge.sm { font-size: 11px; height: 24px; padding: 0 8px; }
+
+  /* components */
+  .components { display: grid; gap: var(--space-lg); }
+  .btn { font-family: var(--font-body); font-size: var(--text-small); font-weight: 700; height: 36px; padding: 0 var(--space-lg); border-radius: var(--radius-md); border: 1px solid transparent; cursor: pointer; display: inline-flex; align-items: center; }
+  .btn-primary { background: var(--color-accent); color: #fff; }
+  .btn-primary:hover { background: var(--color-accent-hover); }
+  .btn-secondary { background: var(--color-surface); border-color: var(--color-surface-subtle); color: var(--color-text); }
+  .btn-destructive { background: var(--color-error); color: #fff; }
+  .btn-disabled { background: var(--color-surface-subtle); color: var(--color-text-muted); cursor: not-allowed; opacity: 0.5; }
+  .btn-row { display: flex; gap: var(--space-md); flex-wrap: wrap; align-items: center; }
+
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-lg);
+    max-width: 360px;
+  }
+  .card h3 { font-family: var(--font-display); font-size: var(--text-h3); font-weight: 500; margin: 0 0 var(--space-sm); }
+  .card p { margin: 0 0 var(--space-md); color: var(--color-text-muted); }
+
+  .field { display: flex; flex-direction: column; gap: var(--space-xs); max-width: 360px; }
+  .field label { font-size: var(--text-micro); font-weight: 600; text-transform: uppercase; letter-spacing: 0.01em; color: var(--color-text-muted); }
+  .field input {
+    font-family: var(--font-body); font-size: var(--text-body);
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--color-border); border-radius: var(--radius-md);
+    background: var(--color-surface); color: var(--color-text);
+  }
+  .field input:focus { outline: 2px solid var(--color-accent); outline-offset: 1px; border-color: var(--color-accent); }
+
+  a.demo-link { color: var(--color-accent); text-decoration: underline; text-underline-offset: 2px; }
+  a.demo-link:hover { color: var(--color-accent-hover); }
+
+  /* icon buttons */
+  .icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 1px solid rgba(0,0,0,0.1); background: transparent; color: var(--color-text); border-radius: 10px; cursor: pointer; }
+  .icon-btn:hover { background: var(--color-surface-subtle); }
+  .icon-btn svg { width: 16px; height: 16px; }
+
+  /* input controls */
+  .controls-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-lg); }
+  .ctrl { display: flex; flex-direction: column; gap: var(--space-xs); }
+  .ctrl > .lbl { font-size: var(--text-micro); font-weight: 600; text-transform: uppercase; letter-spacing: 0.01em; color: var(--color-text-muted); }
+  .inp { height: 36px; padding: 0 var(--space-md); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font-family: var(--font-body); font-size: var(--text-small); width: 100%; }
+  .inp::placeholder { color: var(--color-text-muted); }
+  .inp:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(0,102,204,0.4); }
+  textarea.inp { height: auto; min-height: 64px; padding: var(--space-sm) var(--space-md); resize: vertical; line-height: var(--leading-normal); }
+  .inp.invalid { border-color: var(--color-error); box-shadow: 0 0 0 3px rgba(212,24,61,0.2); }
+  .inp:disabled { opacity: 0.5; cursor: not-allowed; }
+  .select-wrap { position: relative; }
+  .select-wrap .chev { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted); pointer-events: none; width: 16px; height: 16px; }
+  select.inp { appearance: none; -webkit-appearance: none; padding-right: 36px; }
+  .search-wrap { position: relative; }
+  .search-wrap .ic { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted); width: 16px; height: 16px; }
+  .search-wrap .inp { padding-left: 36px; }
+  /* autocomplete popover */
+  .ac { position: relative; }
+  .ac-menu { margin-top: 6px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); box-shadow: var(--shadow-md); overflow: hidden; }
+  .ac-opt { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; font-size: var(--text-small); border-radius: var(--radius-sm); margin: 4px; }
+  .ac-opt:hover, .ac-opt.active { background: var(--color-surface-subtle); }
+  .ac-opt .chk { color: var(--color-accent); width: 14px; height: 14px; }
+  .ac-empty { padding: 10px; font-size: var(--text-small); color: var(--color-text-muted); }
+
+  /* card gallery */
+  .card-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-lg); align-items: start; }
+  .c { background: var(--color-surface); border: 1px solid var(--color-border); box-shadow: var(--shadow-sm); }
+  .c .ct { font-weight: 600; font-size: 0.95rem; margin: 0 0 4px; }
+  .c .cd { color: var(--color-text-muted); font-size: var(--text-small); margin: 0; }
+  .c-base { border-radius: var(--radius-lg); overflow: hidden; }
+  .c-base .head { padding: var(--space-md); border-bottom: 1px solid var(--color-border); font-weight: 600; font-size: 0.95rem; }
+  .c-base .body { padding: var(--space-md); color: var(--color-text-muted); font-size: var(--text-small); }
+  .c-content { border-radius: var(--radius-lg); padding: var(--space-lg); }
+  .c-stat { border-radius: var(--radius-lg); padding: var(--space-lg); }
+  .c-stat .top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--space-md); }
+  .c-stat .tile { width: 40px; height: 40px; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; }
+  .c-stat .trend { font-size: var(--text-small); color: var(--color-success); font-weight: 500; }
+  .c-stat .k { font-size: var(--text-small); color: var(--color-text-muted); }
+  .c-stat .v { font-size: 1.5rem; }
+  .c-stat .sub { font-size: var(--text-micro); color: var(--color-text-muted); }
+  .c-subtle { background: var(--color-bg); border-radius: var(--radius-lg); padding: var(--space-md); box-shadow: none; }
+  .c-select { border-radius: var(--radius-lg); border-width: 2px; padding: var(--space-md); cursor: pointer; }
+  .c-select.sel { border-color: var(--color-accent); background: #0066cc0d; }
+  .c-click { border-radius: var(--radius-lg); padding: var(--space-lg); cursor: pointer; transition: box-shadow 0.15s; }
+  .c-click:hover { box-shadow: var(--shadow-md); }
+  .c-info { background: #eff6ff; border-color: #bfdbfe; border-radius: var(--radius-lg); padding: var(--space-md); box-shadow: none; }
+  .c-warn { background: linear-gradient(90deg, #fff7ed, #fffbeb); border: 2px solid #fed7aa; border-radius: var(--radius-lg); padding: var(--space-md); box-shadow: none; }
+  .c-modal { border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); padding: var(--space-lg); }
+  .c .pill { font-size: var(--text-micro); font-weight: 600; }
+
+  /* composed cards */
+  .composed-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--space-lg); align-items: start; }
+  .cc { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: var(--space-lg); }
+  .cc-wide { grid-column: span 2; }
+  /* ── Unified card header ── icon tile + name, optional eyebrow above ── */
+  .card-head { display: flex; align-items: center; gap: 12px; }
+  .card-head .tile { width: 40px; height: 40px; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .card-head .eyebrow { font-size: var(--text-micro); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-muted); margin: 0 0 2px; line-height: 1.1; }
+  .card-head .name { font-size: 1rem; font-weight: 600; margin: 0; line-height: 1.2; }
+  .card-head .suffix { color: var(--color-text-muted); font-weight: 400; font-size: var(--text-small); margin-left: 6px; }
+  /* header with a trailing action (status pill, link) on the right */
+  .card-head-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); }
+  /* spacing helper between header and body */
+  .hdr-mb { margin-bottom: var(--space-lg); }
+  /* status list */
+  .srow { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
+  .srow .k { font-size: var(--text-small); font-weight: 500; }
+  .srow .v { font-size: var(--text-small); font-weight: 500; color: var(--color-success); }
+  /* metric stack */
+  .metric { margin-bottom: var(--space-md); }
+  .metric .k { font-size: var(--text-small); color: var(--color-text-muted); margin-bottom: 2px; }
+  .metric .vrow { display: flex; align-items: center; gap: var(--space-sm); }
+  .metric .v { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.01em; }
+  .trend-pill { display: inline-flex; align-items: center; gap: 4px; background: var(--color-bg); border-radius: var(--radius-sm); padding: 2px 6px; font-size: var(--text-micro); font-weight: 500; }
+  .trend-pill svg { width: 12px; height: 12px; }
+  /* compact stat */
+  .cc-stat .big { font-size: 28px; font-weight: 700; margin: 6px 0 4px; }
+  .cc-stat .big.accent { color: var(--color-error); }
+  .cc-stat .tr { font-size: var(--text-small); font-weight: 500; color: var(--color-error); }
+  /* resource detail */
+  .res-divider { height: 1px; background: var(--color-border); margin: var(--space-md) 0; }
+  .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm) var(--space-md); margin-bottom: var(--space-md); }
+  .meta-grid .ml { font-size: var(--text-micro); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-muted); margin: 0 0 4px; }
+  .meta-grid .mv { font-size: var(--text-small); color: var(--color-text); margin: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+  .chip2 { background: var(--color-surface-subtle); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 2px 8px; font-size: var(--text-small); color: var(--color-text); }
+  .status-pill { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #bbf7d0; background: #f0fdf4; color: var(--color-success); border-radius: var(--radius-full); padding: 3px 10px; font-size: var(--text-small); font-weight: 500; }
+  .status-pill .dotg { width: 7px; height: 7px; border-radius: 50%; background: var(--color-success); }
+  /* feature panel */
+  .feat-panel { background: linear-gradient(135deg, #f0fdf4, #ffffff); border: 1px solid #d1fae5; border-radius: var(--radius-lg); padding: var(--space-lg); }
+  .feat-row { display: flex; gap: var(--space-sm); margin-top: var(--space-md); }
+  .feat-row .dotg { width: 6px; height: 6px; border-radius: 50%; background: var(--color-success); margin-top: 7px; flex-shrink: 0; }
+  .feat-row .ft { font-size: var(--text-small); font-weight: 600; margin: 0; }
+  .feat-row .fd { font-size: var(--text-small); color: var(--color-text-muted); margin: 2px 0 0; }
+  /* hero card */
+  .hero-card { background: linear-gradient(90deg, #001b50, #004080); color: #fff; border-radius: var(--radius-lg); padding: var(--space-lg); }
+  .hero-card .ht { font-size: var(--text-h3); font-weight: 600; margin: 0 0 4px; }
+  .hero-card .hd { font-size: var(--text-small); opacity: 0.8; margin: 0; }
+
+  /* data table */
+  .table-panel { border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; background: var(--color-surface); }
+  table.ds { width: 100%; border-collapse: collapse; }
+  table.ds thead tr { background: var(--color-surface-subtle); border-bottom: 1px solid var(--color-border); }
+  table.ds th { text-align: left; padding: 10px 16px; font-size: var(--text-micro); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-muted); white-space: nowrap; }
+  table.ds td { padding: 12px 16px; font-size: var(--text-small); color: var(--color-text); border-bottom: 1px solid var(--color-border); }
+  table.ds tbody tr:last-child td { border-bottom: none; }
+  table.ds tbody tr { transition: background 0.12s; }
+  table.ds tbody tr:hover { background: var(--color-surface-subtle); }
+  table.ds .muted { color: var(--color-text-muted); }
+  table.ds .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: var(--text-micro); color: var(--color-text-muted); }
+  table.ds .danger { color: var(--color-error); font-weight: 600; }
+  .table-foot { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; border-top: 1px solid var(--color-border); font-size: var(--text-small); color: var(--color-text-muted); }
+  .table-foot .pager { display: flex; gap: 6px; }
+  .table-foot .pager button { width: 28px; height: 28px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text-muted); cursor: pointer; }
+  .table-foot .pager button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .sev { display: inline-block; font-size: var(--text-micro); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 8px; border-radius: var(--radius-md); }
+  .sev.crit { background: #fee2e2; color: #ef4444; }
+  .sev.high { background: #ffedd5; color: #f97316; }
+  .sev.med { background: #fef3c7; color: #d97706; }
+
+  /* charts */
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); align-items: start; }
+  .chart-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: var(--space-lg); }
+  .chart-card.full { grid-column: 1 / -1; }
+  .chart-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: var(--space-sm); }
+  .chart-legend span { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-micro); color: var(--color-text-muted); }
+  .chart-legend .sw { width: 12px; height: 2px; border-radius: 9999px; }
+  .spark-row { display: flex; align-items: center; gap: var(--space-md); }
+  .spark-row .lbl { font-size: var(--text-small); color: var(--color-text-muted); min-width: 90px; }
+
+  /* tooltips */
+  .tip-demos { display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start; padding-top: var(--space-md); }
+  .tip-label { position: relative; display: inline-block; background: #030213; color: #fff; font-size: var(--text-micro); line-height: 1.4; padding: 6px 12px; border-radius: var(--radius-md); }
+  .tip-label::after { content: ""; position: absolute; left: 50%; bottom: -3px; width: 8px; height: 8px; background: #030213; transform: translateX(-50%) rotate(45deg); border-radius: 2px; }
+  .tip-data { display: inline-block; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); padding: 10px; }
+  .tip-data .th { font-size: var(--text-micro); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-muted); margin: 0 0 6px; }
+  .tip-data .row { display: flex; align-items: center; gap: 8px; font-size: var(--text-small); white-space: nowrap; margin-top: 4px; }
+  .tip-data .row .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .tip-data .row .nm { color: var(--color-text-muted); }
+  .tip-data .row .val { margin-left: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .tip-demos .demo-wrap { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .tip-demos .demo-cap { font-size: var(--text-small); color: var(--color-text-muted); }
+
+  footer.page { margin-top: var(--space-2xl); padding-top: var(--space-lg); border-top: 1px solid var(--color-border); color: var(--color-text-muted); font-size: var(--text-small); }
+
+  /* page header */
+  .ph-demo { background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: var(--space-md); }
+  .ph-topbar { height: 52px; background: var(--color-surface); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; gap: var(--space-sm); padding: 0 var(--space-lg); font-size: var(--text-small); color: var(--color-text-muted); }
+  .ph-topbar .crumb-link { color: var(--color-accent); cursor: pointer; }
+  .ph-topbar .crumb-sep { color: var(--color-border); margin: 0 2px; }
+  .ph-topbar .crumb-cur { color: var(--color-text); }
+  .ph-body { padding: var(--space-lg) var(--space-xl); }
+  .ph { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-lg); }
+  .ph-title { font-family: var(--font-display); font-size: var(--text-h1); font-weight: 700; line-height: var(--leading-tight); color: var(--color-text); margin: 0; }
+  .ph-title-detail { font-family: var(--font-display); font-size: 1.375rem; font-weight: 700; line-height: 1.27; letter-spacing: -0.031em; color: var(--color-text); margin: 0; }
+  .ph-sub { font-size: var(--text-small); color: var(--color-text-muted); margin: 4px 0 0; line-height: var(--leading-normal); max-width: 56ch; }
+  .ph-actions { display: flex; align-items: center; gap: var(--space-sm); flex-shrink: 0; }
+  .ph-back { display: inline-flex; align-items: center; gap: 6px; color: var(--color-accent); font-size: var(--text-small); font-weight: 500; margin-bottom: var(--space-sm); cursor: pointer; background: none; border: none; padding: 0; }
+  .ph-back svg { width: 16px; height: 16px; }
+  .ph-label { font-size: var(--text-micro); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-muted); margin: 0 0 var(--space-xs); }
+  .ph-gallery { display: grid; gap: var(--space-md); }
+
+  /* secondary nav */
+  .sec-nav { width: 192px; background: var(--color-bg); border-right: 1px solid var(--color-border); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; }
+  .sec-nav-head { padding: var(--space-md); border-bottom: 1px solid var(--color-border); }
+  .sec-nav-head h2 { font-size: var(--text-micro); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text); margin: 0; line-height: 1; }
+  .sec-nav-body { flex: 1; padding: var(--space-sm); display: flex; flex-direction: column; gap: 2px; }
+  .sec-nav-item { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: var(--radius-md); border: none; background: none; cursor: pointer; text-align: left; width: 100%; color: var(--color-text-muted); font-size: var(--text-small); font-family: var(--font-body); transition: background 0.12s; }
+  .sec-nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .sec-nav-item:hover { background: rgba(255,255,255,0.6); color: var(--color-text); }
+  .sec-nav-item.active { background: var(--color-nav-accent); color: #fff; box-shadow: var(--shadow-sm); }
+  .sec-nav-item.active svg path, .sec-nav-item.active svg rect, .sec-nav-item.active svg circle, .sec-nav-item.active svg polyline { stroke: #fff; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <p class="eyebrow">Design System</p>
+    <h1>SonicWall ZTP</h1>
+    <p><strong>Direction:</strong> Modern enterprise security console — navy command shell, neutral workspace &nbsp;·&nbsp; <strong>Feeling:</strong> Serious, trustworthy, in control</p>
+  </header>
+
+  <!-- SHELL / NAV -->
+  <section>
+    <h2>Navigation chrome</h2>
+    <div class="shell">
+      <div class="nav-rail">
+
+        <!-- Logo -->
+        <div class="nav-logo">
+          <svg width="60" height="50" viewBox="0 0 60 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M29.4993 36C29.4993 36 17.2114 31.4971 14.5015 24.0048C11.4682 15.6166 22.7157 13.702 34.2215 14.0355C40.4218 14.2155 48 15.1755 48 15.1755C48 15.1755 30.0971 17.495 23.6273 22.8077C17.3105 27.9953 29.4993 36 29.4993 36Z" fill="#FF5D00"/>
+          </svg>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="nav-tab active" onclick="setActive(this)">
+          <div class="bar"></div>
+          <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
+            <path d="M9.59961 13.2002C10.2624 13.2002 10.7998 13.7376 10.7998 14.4004V22.7998C10.7998 23.4624 10.2631 23.9997 9.60059 24H1.2002C0.537454 24 0 23.4625 0 22.7998V14.4004C0 13.7376 0.537454 13.2002 1.2002 13.2002H9.59961Z"/>
+            <path d="M22.7998 13.2002C23.4625 13.2002 24 13.7376 24 14.4004V22.7998C24 23.4625 23.4625 24 22.7998 24H14.4004C13.7376 24 13.2002 23.4625 13.2002 22.7998V14.4004C13.2002 13.7376 13.7376 13.2002 14.4004 13.2002H22.7998Z"/>
+            <path d="M9.59961 0C10.2624 0 10.7998 0.537454 10.7998 1.2002V9.59961C10.7998 10.2624 10.2624 10.7998 9.59961 10.7998H1.2002C0.537454 10.7998 0 10.2624 0 9.59961V1.2002C0 0.537454 0.537454 0 1.2002 0H9.59961Z"/>
+            <path d="M22.7998 0C23.4625 0 24 0.537454 24 1.2002V9.59961C24 10.2624 23.4625 10.7998 22.7998 10.7998H14.4004C13.7376 10.7998 13.2002 10.2624 13.2002 9.59961V1.2002C13.2002 0.537454 13.7376 0 14.4004 0H22.7998Z"/>
+          </svg>
+          <span class="tip">Dashboard</span>
+        </div>
+
+        <!-- Inventory -->
+        <div class="nav-tab" onclick="setActive(this)">
+          <div class="bar"></div>
+          <svg viewBox="0 0 29 26" fill="none" width="29" height="26">
+            <path clip-rule="evenodd" fill-rule="evenodd" d="M23.7607 12.5732C24.009 12.5734 24.2107 12.7752 24.2109 13.0234V14.8105C24.6624 14.9829 25.0795 15.2245 25.4482 15.5234L27.002 14.6299C27.2171 14.5064 27.4928 14.5802 27.6172 14.7949L28.7852 16.8145C28.9095 17.0294 28.836 17.3045 28.6211 17.4287L27.0684 18.3223C27.1053 18.5547 27.125 18.7933 27.125 19.0361C27.125 19.2785 27.1051 19.517 27.0684 19.749L28.6211 20.6436C28.8363 20.7675 28.9092 21.0428 28.7852 21.2578L27.6172 23.2773C27.4927 23.4924 27.2173 23.5664 27.002 23.4424L25.4492 22.5479C25.0802 22.8472 24.6628 23.0891 24.2109 23.2617V25.0498C24.2109 25.2982 24.0091 25.4999 23.7607 25.5H21.4229C21.1743 25.5 20.9727 25.2983 20.9727 25.0498V23.2627C20.5203 23.0901 20.1028 22.8476 19.7334 22.5479L18.1816 23.4424C17.9663 23.5663 17.6908 23.4924 17.5664 23.2773L16.3984 21.2578C16.2742 21.0428 16.3473 20.7676 16.5625 20.6436L18.1133 19.749C18.0765 19.517 18.0576 19.2785 18.0576 19.0361C18.0577 18.7931 18.0763 18.554 18.1133 18.3213L16.5635 17.4287C16.3482 17.3046 16.274 17.0296 16.3984 16.8145L17.5674 14.7949C17.692 14.5802 17.9675 14.5059 18.1826 14.6299L19.7334 15.5234C20.1026 15.2241 20.5206 14.982 20.9727 14.8096V13.0234C20.9729 12.7751 21.1745 12.5732 21.4229 12.5732H23.7607ZM22.5918 17.0977C21.5188 17.0977 20.6487 17.9655 20.6484 19.0361C20.6484 20.107 21.5186 20.9756 22.5918 20.9756C23.6648 20.9754 24.5352 20.1069 24.5352 19.0361C24.5349 17.9656 23.6646 17.0979 22.5918 17.0977Z"/>
+            <path clip-rule="evenodd" fill-rule="evenodd" d="M20.709 0C22.5265 0.000223648 23.9998 1.47354 24 3.29102V11.3311C23.8596 11.2989 23.7137 11.2813 23.5635 11.2812H21.6201C20.547 11.2813 19.6768 12.1489 19.6768 13.2197V13.998L19.001 13.6094C18.9356 13.5717 18.8684 13.5381 18.8008 13.5088C18.1569 13.2299 17.4268 13.3276 16.8818 13.7256H4.7998V15.5254H15.6484L15.375 15.998C14.8384 16.9254 15.1566 18.112 16.0859 18.6475L16.7627 19.0371L16.0859 19.4268C15.3097 19.8741 14.962 20.7744 15.1807 21.5996H3.29102C1.47341 21.5994 1.19558e-05 20.1263 0 18.3086V3.29102C0.000225844 1.47354 1.47354 0.000223262 3.29102 0H20.709ZM4.7998 11.9258H19.2002V10.125H4.7998V11.9258ZM4.7998 8.3252H19.2002V6.52539H4.7998V8.3252Z"/>
+          </svg>
+          <span class="tip">Inventory</span>
+        </div>
+
+        <!-- Admin Setting -->
+        <div class="nav-tab" onclick="setActive(this)">
+          <div class="bar"></div>
+          <svg viewBox="0 0 29 28" fill="none" width="29" height="28">
+            <path clip-rule="evenodd" fill-rule="evenodd" d="M23.7141 14.8945C23.9625 14.8946 24.1643 15.0962 24.1643 15.3447V17.1318C24.6157 17.3042 25.0329 17.5458 25.4016 17.8447L26.9553 16.9512C27.1706 16.8274 27.4461 16.9012 27.5705 17.1162L28.7385 19.1357C28.8627 19.3508 28.7895 19.6259 28.5744 19.75L27.0217 20.6436C27.0586 20.876 27.0783 21.1146 27.0783 21.3574C27.0783 21.5999 27.0585 21.8382 27.0217 22.0703L28.5744 22.9648C28.7896 23.089 28.8629 23.3641 28.7385 23.5791L27.5705 25.5986C27.4461 25.8135 27.1706 25.8875 26.9553 25.7637L25.4026 24.8691C25.0335 25.1686 24.6162 25.4104 24.1643 25.583V27.3711C24.1641 27.6194 23.9624 27.8212 23.7141 27.8213H21.3762C21.1278 27.8213 20.9262 27.6194 20.926 27.3711V25.584C20.4737 25.4114 20.0561 25.1688 19.6867 24.8691L18.135 25.7637C17.9198 25.8875 17.6442 25.8134 17.5198 25.5986L16.3518 23.5791C16.2273 23.364 16.3006 23.0889 16.5158 22.9648L18.0666 22.0703C18.0298 21.8383 18.011 21.5998 18.011 21.3574C18.011 21.1143 18.0296 20.8753 18.0666 20.6426L16.5168 19.75C16.3015 19.626 16.2275 19.3508 16.3518 19.1357L17.5207 17.1162C17.6452 16.9012 17.9207 16.8271 18.136 16.9512L19.6867 17.8447C20.056 17.5452 20.4739 17.3034 20.926 17.1309V15.3447C20.926 15.0962 21.1277 14.8945 21.3762 14.8945H23.7141ZM22.5451 19.4189C21.472 19.4189 20.6018 20.2866 20.6018 21.3574C20.6019 22.4282 21.4721 23.2969 22.5451 23.2969C23.618 23.2967 24.4883 22.428 24.4885 21.3574C24.4884 20.2867 23.6181 19.4191 22.5451 19.4189Z"/>
+            <path d="M12.4768 14.2188C14.6482 14.2188 17.3331 14.4796 19.6516 15.2666C19.6389 15.356 19.6301 15.4471 19.6301 15.54V16.3184L18.9543 15.9297C18.8889 15.892 18.8217 15.8584 18.7541 15.8291C17.8606 15.4423 16.7988 15.7778 16.3 16.6396L15.3283 18.3193C14.7921 19.2466 15.1102 20.4324 16.0393 20.9678L16.716 21.3574L16.0393 21.7471C15.4481 22.0878 15.1052 22.692 15.0715 23.3252H0.2678L0.156472 22.7861C-0.197941 21.07 0.0643398 19.6224 0.795144 18.4385C1.51607 17.2709 2.65415 16.4226 3.94358 15.8105C6.50956 14.5927 9.86515 14.2188 12.4768 14.2188Z"/>
+            <path d="M12.4768 0C15.7099 6.27461e-05 18.3332 2.61595 18.3332 5.8457C18.3332 9.0754 15.7099 11.6913 12.4768 11.6914C9.24372 11.6913 6.6204 9.07539 6.62034 5.8457C6.62034 2.61597 9.24368 8.75755e-05 12.4768 0Z"/>
+          </svg>
+          <span class="tip">Admin Setting</span>
+        </div>
+
+        <!-- ZTP -->
+        <div class="nav-tab" onclick="setActive(this)" style="position:relative;">
+          <div class="bar"></div>
+          <svg viewBox="0 0 28 28" fill="none" width="28" height="28">
+            <path d="M23.8294 1.98523C25.072 1.98523 26.0793 2.99266 26.0794 4.23523V24.2352C26.0794 25.4779 25.072 26.4852 23.8294 26.4852H3.82939C2.58675 26.4852 1.57939 25.4779 1.57939 24.2352V4.23523C1.57946 2.99266 2.58679 1.98523 3.82939 1.98523H23.8294ZM4.41825 8.40809C3.76903 8.40814 3.19373 8.82599 2.99247 9.44324L2.66923 10.4335H7.09599L2.52275 18.3055V20.0702H8.35673C9.05288 20.07 9.65847 19.5907 9.81767 18.913L10.0208 18.0448H5.02177L9.59501 10.1718V8.40809H4.41825ZM17.9124 8.40809H10.222V10.4823H12.8518L10.9134 20.0702H13.2327L15.1712 10.4823H17.4505L17.4456 10.5038H20.7786C21.9975 10.504 22.6065 10.9669 22.6067 12.1639C22.6066 13.405 22.0026 14.0271 20.7942 14.0272H19.0794L19.5345 11.9032H17.2132L15.5794 20.0702H17.9134L18.6966 15.9862H20.8431C22.0623 15.9861 23.0213 15.6437 23.7181 14.9579C24.4147 14.2612 24.7638 13.3191 24.764 12.1327C24.764 10.9569 24.4204 10.0409 23.7347 9.38758C23.0488 8.73449 22.0793 8.40818 20.8274 8.40809L17.9134 8.4032L17.9124 8.40809Z"/>
+          </svg>
+          <span class="tip">ZTP</span>
+        </div>
+
+        <!-- Firewall -->
+        <div class="nav-tab" onclick="setActive(this)">
+          <div class="bar"></div>
+          <svg viewBox="0 0 28 23" fill="none" width="28" height="23">
+            <path d="M5.27148 0C6.85702 0.239599 10.3598 2.21936 9.2998 6.6875C8.75464 8.38322 7.66972 9.69815 7.05859 10.4385C5.85645 12.2758 7.28652 14.5145 9.26953 14.5146C11.0762 14.5144 12.54 12.4996 12.54 10.0137C12.5399 8.75637 12.1646 7.62028 11.5605 6.80371C13.4356 8.39886 14.661 11.0239 14.6611 13.9941C14.6609 18.858 11.3786 22.8008 7.33008 22.8008C3.28187 22.8004 0.000192676 18.8577 0 13.9941C0.00010087 10.5503 1.64613 7.56885 4.04395 6.12109C5.63646 4.61676 7.20735 2.14859 5.27148 0Z"/>
+            <path d="M19.1465 21.9678H12.8838C14.2105 20.542 15.0271 18.7153 15.3467 16.7988H19.1465V21.9678Z"/>
+            <path d="M26.3467 20.3223C26.3463 21.2308 25.6088 21.9677 24.7002 21.9678H20.3467V16.7988H26.3467V20.3223Z"/>
+            <path d="M26.3457 15.5068H15.4863C15.5773 13.7199 15.2492 11.9163 14.5146 10.3389H26.3457V15.5068Z"/>
+            <path d="M20.6738 0.40625C21.9728 0.401768 23.4108 0.473509 24.5176 0.544922C25.0722 0.580709 25.5468 0.616405 25.8828 0.643555C26.0507 0.657119 26.1846 0.668774 26.2764 0.676758L26.3818 0.685547L27.2939 0.935547C24.5179 1.35589 15.6674 2.53029 16.4736 6.39258C16.5596 6.80367 16.8606 7.28 17.3115 7.76758C17.7506 8.24225 18.2718 8.66461 18.6924 8.97266C18.9007 9.12523 19.0807 9.24642 19.207 9.3291C19.27 9.37031 19.3196 9.40222 19.3525 9.42285L19.3887 9.44531L19.3965 9.4502C16.6608 9.43056 10.0147 6.6631 12.0889 2.97559C12.512 2.22354 13.2724 1.7109 14.1299 1.35547C15.8383 0.647407 18.2912 0.414765 20.6738 0.40625Z"/>
+            <path d="M24.7002 3.87793C25.6088 3.87818 26.3456 4.61478 26.3457 5.52344V9.04688H20.5137V9.0293C20.5137 9.0293 18.96 7.75111 18.2842 6.99121C17.8899 6.5478 17.77 6.26401 17.752 6.17578C17.5757 5.29174 18.4016 4.52635 19.7402 3.87793H24.7002Z"/>
+          </svg>
+          <span class="tip">Firewall</span>
+        </div>
+
+        <!-- Capture Client -->
+        <div class="nav-tab" onclick="setActive(this)">
+          <div class="bar"></div>
+          <svg viewBox="0 0 23 26" fill="none" width="23" height="26">
+            <path d="M22.7998 11.7939C22.7998 15.0073 21.2781 18.0306 18.6982 19.9434L11.6064 25.2002C9.01402 23.1472 4.51901 18.8034 8.33203 15.7773C11.5289 13.3172 18.0394 11.7088 22.7998 10.8066V11.7939Z"/>
+            <path d="M22.7998 9.28906C20.9995 9.12388 18.9938 8.96854 17.1318 8.88965C8.66551 8.55778 0.332783 9.67933 0.432617 14.7266C0.148832 13.7865 0 12.7995 0 11.7939V0L6.64355 0.738281C9.80427 1.08977 12.9946 1.08974 16.1553 0.738281L22.7998 0V9.28906Z"/>
+          </svg>
+          <span class="tip">Capture Client</span>
+        </div>
+
+        <!-- RDP -->
+        <div class="nav-tab" onclick="setActive(this)">
+          <div class="bar"></div>
+          <svg viewBox="0 0 33 29" fill="none" width="33" height="29">
+            <path d="M16.7998 28.5772H4.7998V26.7774H16.7998V28.5772Z"/>
+            <path d="M20.4004 9.67774C21.0628 9.67795 21.5994 10.2145 21.5996 10.877V22.877C21.5996 23.5396 21.063 24.0769 20.4004 24.0772H1.2002C0.537454 24.0772 0 23.5397 0 22.877V10.877C0.000218414 10.2144 0.537588 9.67774 1.2002 9.67774H20.4004Z"/>
+            <path clip-rule="evenodd" fill-rule="evenodd" d="M27.5996 8.47755C28.2624 8.47755 28.7998 9.015 28.7998 9.67774V16.8779C28.7995 17.5404 28.2622 18.0772 27.5996 18.0772H24C23.3375 18.0771 22.8001 17.5403 22.7998 16.8779V9.67774C22.7998 9.01507 23.3373 8.47765 24 8.47755H27.5996ZM25.7998 10.8779C25.1374 10.8781 24.5998 11.4147 24.5996 12.0772C24.5997 12.7397 25.1373 13.2771 25.7998 13.2774C26.4625 13.2774 26.9999 12.7398 27 12.0772C26.9998 11.4146 26.4624 10.8779 25.7998 10.8779Z"/>
+            <path d="M25.8037 0.000984263C27.1036 -0.00226432 28.3895 0.275327 29.585 0.816414C30.7813 1.35799 31.8613 2.15165 32.7646 3.14552L31.4326 4.35548C30.6892 3.53768 29.8079 2.89398 28.8428 2.45704C27.8778 2.02023 26.8454 1.79782 25.8057 1.80079H25.8018C24.761 1.799 23.7272 2.02052 22.7607 2.45606C21.794 2.89191 20.9092 3.5343 20.1621 4.34962L18.8359 3.1338C19.7425 2.14444 20.8242 1.35478 22.0205 0.815437C23.2161 0.276547 24.5016 -0.00168755 25.8008 7.70037e-06L25.8037 0.000984263Z"/>
+            <path d="M25.8027 3.5293C27.0453 3.52928 28.2092 3.71707 29.0117 4.07909C29.8142 4.44108 30.5383 4.96973 31.1445 5.62987L30.4824 6.23925L29.8193 6.84764C29.3722 6.36079 28.8451 5.9795 28.2715 5.72069C27.698 5.46208 27.0861 5.33007 26.4707 5.33008C25.8554 5.33021 25.2431 5.46212 24.6699 5.72069C24.0966 5.9795 23.5697 6.3611 23.123 6.84764L21.7969 5.62987C22.4031 4.9697 23.1282 4.44115 23.9307 4.07909C24.7331 3.71717 25.5969 3.52942 26.4707 3.52929Z"/>
+          </svg>
+          <span class="tip">RDP</span>
+        </div>
+
+        <!-- AP & Switch -->
+        <div class="nav-tab" onclick="setActive(this)">
+          <div class="bar"></div>
+          <svg viewBox="0 0 29 25" fill="none" width="29" height="25">
+            <path clip-rule="evenodd" fill-rule="evenodd" d="M26.1426 14.0998C27.4289 14.0998 28.5 15.1964 28.5 16.4572V22.5422C28.4999 23.8285 27.4033 24.8987 26.1426 24.8987H20.0576C18.7713 24.8986 17.7013 23.8029 17.7012 22.5422V16.4572C17.7012 15.1709 18.7968 14.0999 20.0576 14.0998H26.1426ZM18.5488 21.9153C18.4801 21.9545 18.4454 22.0135 18.4453 22.092C18.4453 22.1706 18.4801 22.2295 18.5488 22.2688L21.4502 23.5061V22.5637H23.1006V21.6203H21.4502V20.678L18.5488 21.9153ZM24.75 19.7356H23.1006V20.678H24.75V21.6203L27.6523 20.383C27.7208 20.3437 27.7549 20.2847 27.7549 20.2063C27.7548 20.128 27.7209 20.0687 27.6523 20.0295L24.75 18.7922V19.7356ZM18.5488 18.6155C18.4802 18.6547 18.4454 18.7138 18.4453 18.7922C18.4453 18.8708 18.4801 18.9297 18.5488 18.969L21.4502 20.2063V19.2639H23.1006V18.3215H21.4502V17.3781L18.5488 18.6155ZM24.75 16.4358H23.1006V17.3781H24.75V18.3215L27.6523 17.0842C27.7209 17.045 27.7547 16.9857 27.7549 16.9074C27.7549 16.8291 27.7208 16.77 27.6523 16.7307L24.75 15.4924V16.4358Z"/>
+            <path d="M14.2031 13.8762C14.4413 13.8762 14.6707 13.9694 14.8438 14.135C15.0165 14.3005 15.1204 14.5265 15.1338 14.7668L15.3379 19.1897H16.5V22.4856H8.06445C6.89979 22.4853 6.04503 21.2996 6.04492 20.0998V19.1897H13.0684L13.2725 14.7668C13.2858 14.5264 13.3897 14.3005 13.5625 14.135C13.7356 13.9694 13.965 13.8762 14.2031 13.8762Z"/>
+            <path d="M3.0625 0.299045C3.39416 -0.0708922 3.96384 -0.101782 4.33398 0.229709C4.70348 0.561354 4.73448 1.1302 4.40332 1.50022C2.76327 3.33127 1.80087 5.62341 1.80078 8.09983C1.80094 10.5762 2.7632 12.8684 4.40332 14.6994C4.73446 15.0695 4.70357 15.6383 4.33398 15.9699C3.96388 16.3013 3.39414 16.2704 3.0625 15.9006C1.1551 13.7712 0.000159274 11.0603 0 8.09983C9.28155e-05 5.1393 1.15513 2.4285 3.0625 0.299045Z"/>
+            <path d="M5.75098 2.69748C6.08362 2.32852 6.65229 2.2988 7.02148 2.63108C7.39048 2.96388 7.42056 3.53342 7.08789 3.90256C6.01414 5.09397 5.40044 6.54693 5.40039 8.09983C5.40051 9.65267 6.01414 11.1057 7.08789 12.2971C7.42046 12.6663 7.39062 13.2359 7.02148 13.5686C6.65234 13.9008 6.08363 13.871 5.75098 13.5022C4.41485 12.0197 3.59973 10.1484 3.59961 8.09983C3.59966 6.05124 4.41487 4.17997 5.75098 2.69748Z"/>
+            <path d="M14.1367 5.08225C14.9801 5.48459 16.9496 6.53551 16.9805 6.55197V10.1106C16.98 10.2403 16.9667 10.3704 16.9414 10.4973C16.9152 10.6295 16.8766 10.7591 16.8262 10.883C16.776 11.0074 16.7188 11.1292 16.6553 11.2463C16.5939 11.3596 16.5253 11.4692 16.4512 11.5735C16.3771 11.6683 16.2956 11.7664 16.208 11.8655C16.119 11.9661 16.0231 12.0603 15.9219 12.1467C15.8194 12.2415 15.7195 12.3291 15.624 12.4084C15.5282 12.4858 15.4362 12.557 15.3486 12.6203C15.2611 12.6837 15.1725 12.7453 15.085 12.8049C14.997 12.8645 14.905 12.9224 14.8096 12.9778C14.7142 13.0331 14.6326 13.0788 14.5664 13.1145C14.4014 13.1926 14.3679 13.2144 14.3325 13.2339C14.2969 13.2512 14.2638 13.2671 14.2357 13.2793C14.2139 13.2873 14.1943 13.2944 14.1736 13.3004C14.1533 13.3049 14.1371 13.3082 14.1201 13.3104C14.1035 13.3108H14.0986C14.0821 13.3104 14.0651 13.3082 14.0488 13.3049C14.0285 13.3004 14.0079 13.2945 13.9883 13.2873C13.9664 13.2794 13.9385 13.2671 13.9053 13.2512C13.8695 13.2338 13.8344 13.2144 13.8008 13.1926C13.6348 13.1145 13.5687 13.0788 13.4879 13.0331C13.3926 12.9778 13.2966 12.9223 13.2048 12.8646C13.1172 12.8049 13.0295 12.7452 12.9412 12.6838C12.8535 12.6203 12.7654 12.5597 12.6737 12.4888C12.5781 12.4084 12.4825 12.3281 12.3833 12.2407C12.2803 12.1467 12.1787 12.0601 12.0824 11.9665C11.9932 11.8655 11.9046 11.7653 11.8232 11.6675C11.75 11.5735 11.6758 11.4692 11.6073 11.3597C11.5459 11.2463 11.4824 11.1291 11.4252 11.0074C11.375 10.883 11.3245 10.759 11.286 10.6296C11.2598 10.4973 11.2344 10.3704 11.2211 10.2403C11.2207 10.1106V6.55197C11.2554 6.53374 13.2739 5.4722 14.1367 5.08225Z"/>
+            <path d="M21.1777 2.63108C21.5469 2.29831 22.1164 2.32835 22.4492 2.69748C23.7854 4.17999 24.5996 6.0512 24.5996 8.09983C24.5995 9.8802 23.9834 11.5259 22.9453 12.8996H20.8818C21.1123 12.2971 22.186 11.1057 22.7998 8.09983C22.7998 6.5469 22.1861 5.09398 21.1123 3.90256C20.7797 3.53346 20.8089 2.96389 21.1777 2.63108Z"/>
+            <path d="M23.8672 0.229709C24.2373 -0.101554 24.8061 -0.0707527 25.1377 0.299045C27.0451 2.4285 28.2001 5.13929 28.2002 8.09983C28.2001 9.80366 27.8164 11.4244 27.1279 12.8996H25.1025C25.9355 11.4503 26.4003 9.81958 26.4004 8.09983C26.4003 5.62349 25.4378 3.33124 23.7979 1.50022C23.4664 1.13013 23.4974 0.561384 23.8672 0.229709Z"/>
+            <path d="M18.4775 5.04123C18.8414 4.703 19.4106 4.72353 19.749 5.08713C20.5139 5.91012 21.001 6.94794 21.001 8.1008C21.0006 9.25347 20.514 10.2907 19.749 11.1135C19.4107 11.4768 18.8414 11.4971 18.4775 11.1594C18.1137 10.8211 18.0928 10.252 18.4307 9.88791C18.9415 9.33847 19.1999 8.72336 19.2002 8.1008C19.2002 7.47809 18.9414 6.86332 18.4307 6.31369C18.0923 5.94973 18.1137 5.3797 18.4775 5.04123Z"/>
+            <path d="M8.45215 5.08713C8.79061 4.72353 9.35974 4.703 9.72363 5.04123C10.0871 5.37975 10.1088 5.94987 9.77051 6.31369C9.25955 6.86342 9.00098 7.47794 9.00098 8.1008C9.00132 8.72336 9.2597 9.33847 9.77051 9.88791C10.108 10.252 10.0873 10.8213 9.72363 11.1594C9.35991 11.4973 8.79063 11.4765 8.45215 11.1135C7.6872 10.2907 7.20054 9.25347 7.2002 8.1008C7.2002 6.94776 7.68706 5.91018 8.45215 5.08713Z"/>
+          </svg>
+          <span class="tip">AP &amp; Switch</span>
+        </div>
+
+        <!-- MDR -->
+        <div class="nav-tab" onclick="setActive(this)">
+          <div class="bar"></div>
+          <svg viewBox="0 0 32 29" fill="none" width="32" height="29">
+            <path clip-rule="evenodd" fill-rule="evenodd" d="M23.3284 14.792L23.7649 14.9814C24.858 15.4462 26.027 15.881 27.01 16.2188L27.1204 16.2568C27.4221 16.3483 27.6879 16.5168 27.8948 16.749C28.0982 16.9772 28.2365 17.2577 28.2981 17.5723C28.3849 18.0549 28.4251 18.5304 28.4407 19.125C29.5714 19.1354 30.5066 19.169 31.0774 19.2236C31.0722 19.2249 29.9548 19.5007 28.4495 19.8877V20.6699L28.4612 21.4023L28.2063 21.5508C27.4868 24.2703 25.9412 26.4667 23.5931 28.1191L23.2522 28.3516L22.7571 28.6787L22.262 28.3525C21.5997 27.9168 20.9985 27.439 20.4563 26.9229C17.8968 25.7967 16.304 24.5046 15.7181 22.9316C15.241 21.6506 15.8325 20.8106 17.054 20.2549L17.055 19.8135C17.0566 18.7688 17.0871 18.2363 17.2093 17.5576C17.2609 17.2948 17.3734 17.0479 17.5364 16.8379L17.6097 16.75C17.8155 16.519 18.0815 16.3484 18.346 16.2695L18.9993 16.043C19.6488 15.8125 20.3536 15.5484 21.0472 15.2686L21.7347 14.9844L22.1702 14.7949L22.7503 14.5332L23.3284 14.792ZM26.6497 20.3564C24.0721 21.0378 21.2184 21.8388 20.6429 22.1885L20.5989 22.2158C20.2194 22.4962 19.955 22.7782 19.7835 23.0576C20.462 24.394 21.4462 25.5411 22.7552 26.501C24.652 25.1056 25.8782 23.3123 26.4661 21.0898L26.6497 20.3984V20.3564ZM22.4505 16.6357L22.4388 16.6406C21.4916 17.0433 20.4933 17.423 19.6018 17.7393L19.5901 17.7432L18.9681 17.958C18.8881 18.4267 18.8602 18.8305 18.8567 19.7012C19.976 19.4683 21.2978 19.3352 22.6888 19.2549L23.2796 19.2236C24.4127 19.1707 25.5665 19.1395 26.6409 19.127C26.6264 18.6487 26.5933 18.2957 26.5364 17.959L26.5325 17.958L26.4222 17.9199C25.4099 17.5721 24.2 17.1225 23.0599 16.6377L23.0481 16.6328L22.7522 16.5039L22.4505 16.6357Z"/>
+            <path d="M12.4759 14.2188C14.4579 14.2188 16.8688 14.4352 19.0374 15.0713L18.0501 15.4199C17.6299 15.5536 17.2378 15.814 16.9378 16.1504C16.6653 16.456 16.4712 16.8221 16.3665 17.2148L16.3235 17.3984C16.2215 17.9649 16.1791 18.4402 16.1634 19.0918L16.1546 20.0586C15.0043 20.7988 14.6258 21.8715 15.2561 23.1904C15.2778 23.2357 15.3018 23.2805 15.3255 23.3252H0.267862L0.156534 22.7861C-0.197951 21.0698 0.0642401 19.6225 0.795205 18.4385C1.51615 17.271 2.65329 16.4226 3.94267 15.8105C6.50857 14.5927 9.86428 14.2188 12.4759 14.2188Z"/>
+            <path d="M12.4759 0C15.7088 0.000233079 18.3333 2.61606 18.3333 5.8457C18.3332 9.0753 15.7088 11.6912 12.4759 11.6914C9.24289 11.6912 6.61948 9.07533 6.61942 5.8457C6.61942 2.61603 9.24285 0.000185952 12.4759 0Z"/>
+          </svg>
+          <span class="tip">MDR</span>
+        </div>
+
+        <!-- CSE -->
+        <div class="nav-tab" onclick="setActive(this)">
+          <div class="bar"></div>
+          <svg viewBox="0 0 29 26" fill="none" width="29" height="26">
+            <path d="M1.1828 13.5166C4.70257 10.0071 16.3345 10.6273 19.8 11.3398C15.5771 12.0025 7.80015 13.2298 6.00019 17.0098C4.37781 20.4171 7.13373 23.8557 8.77265 25.1992C1.18336 22.211 -1.89887 17.3923 1.1828 13.5166Z"/>
+            <path d="M11.4016 0C13.2128 0.000206314 14.8536 0.814696 16.0461 2.13281C16.8067 1.67633 17.6776 1.41797 18.6017 1.41797C21.5835 1.4185 24.0009 4.11477 24.0012 7.44141C24.0012 7.50269 23.9979 7.56416 23.9963 7.625C26.7171 8.04137 28.8017 10.3923 28.8019 13.2295C28.8019 16.3608 26.2632 18.9001 23.132 18.9004H6.87226C6.7671 18.3137 6.89183 17.779 7.20136 17.3623C9.63304 14.0891 17.4011 12.5998 25.801 11.3398C18.0065 9.15745 6.49957 8.86615 1.47773 11.4814C2.0012 9.86633 3.22985 8.56909 4.80097 7.95215V7.36328C4.80097 3.29674 7.75647 0 11.4016 0Z"/>
+          </svg>
+          <span class="tip">CSE</span>
+        </div>
+
+        <!-- SAMI -->
+        <div class="nav-tab" onclick="setActive(this)">
+          <div class="bar"></div>
+          <svg viewBox="0 0 32 31" fill="none" width="32" height="31">
+            <path clip-rule="evenodd" fill-rule="evenodd" d="M15.6027 0C17.0384 2.15179e-05 18.2023 1.16392 18.2023 2.59961C18.2022 3.56125 17.6788 4.399 16.9025 4.84863V6.71289H19.5031C23.8097 6.71323 27.3016 10.2051 27.3019 14.5117V17.1113C27.3019 21.4182 23.8099 24.9098 19.5031 24.9102H14.6291L7.7814 30.7236C7.66851 30.819 7.48092 30.6675 7.54703 30.5352C8.30812 29.0109 9.71452 25.4497 7.3732 23.5967C6.57715 22.9667 5.80111 22.3083 5.23355 21.4668C5.17455 21.3808 5.11722 21.2906 5.06168 21.1982C4.32893 20.0098 3.90543 18.61 3.90543 17.1113V14.5117C3.90547 13.9029 3.97655 13.3108 4.10855 12.7422C2.78365 11.9062 0.783179 10.345 0.177888 8.23438C-1.61402 1.98938 10.6514 4.01247 13.6535 5.19922C7.14831 3.97016 4.55484 7.86035C3.5539 9.36201 3.55289 11.106 4.18961 12.4248C5.10252 9.1315 8.12035 6.71289 11.7043 6.71289H14.3029V4.84863C13.5267 4.39898 13.0031 3.56117 13.0031 2.59961C13.0031 1.16404 14.1672 0.000211309 15.6027 0ZM18.1281 18.7432C17.953 18.2553 17.527 18.0572 17.1769 18.3008C16.1865 18.9913 15.0209 18.9912 14.0304 18.3008C13.6803 18.0567 13.2545 18.2552 13.0793 18.7432C12.9042 19.2314 13.0456 19.8251 13.3957 20.0693C14.7852 21.0381 16.4211 21.038 17.8107 20.0693C18.1605 19.825 18.303 19.2312 18.1281 18.7432ZM10.4045 11.6973C9.68679 11.6973 9.10496 12.2795 9.10465 12.9971V15.5967C9.10465 16.3145 9.6866 16.8965 10.4045 16.8965C11.1221 16.8962 11.7043 16.3144 11.7043 15.5967V12.9971C11.7039 12.2797 11.1219 11.6975 10.4045 11.6973ZM20.8029 11.6973C20.0853 11.6973 19.5034 12.2795 19.5031 12.9971V15.5967C19.5031 16.3145 20.0851 16.8964 20.8029 16.8965C21.5206 16.8963 22.1027 16.3144 22.1027 15.5967V12.9971C22.1024 12.2796 21.5204 11.6975 20.8029 11.6973Z"/>
+            <path d="M2.60562 22.0967H1.30582C0.58811 22.0967 0.00624609 21.5145 0.00601253 20.7969V12.998C0.00601253 12.2802 0.587966 11.6982 1.30582 11.6982H2.60562V22.0967Z"/>
+            <path d="M29.9005 11.6982C30.6184 11.6982 31.2003 12.2802 31.2003 12.998V20.7969C31.2001 21.5145 30.6183 22.0967 29.9005 22.0967H28.6007V11.6982H29.9005Z"/>
+          </svg>
+          <span class="tip">SAMI</span>
+        </div>
+
+      </div><!-- /nav-rail -->
+
+      <!-- Secondary nav — ZTP shown as the representative example -->
+      <div class="sec-nav" id="sec-nav">
+        <div class="sec-nav-head">
+          <h2 id="sec-nav-title">ZTP</h2>
+        </div>
+        <div class="sec-nav-body" id="sec-nav-body">
+
+          <!-- Dashboard -->
+          <button class="sec-nav-item" onclick="setSecActive(this)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/>
+              <rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/>
+            </svg>
+            Dashboard
+          </button>
+
+          <!-- IDP -->
+          <button class="sec-nav-item active" onclick="setSecActive(this)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+            </svg>
+            IDP
+          </button>
+
+          <!-- Policies -->
+          <button class="sec-nav-item" onclick="setSecActive(this)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="1" width="12" height="14" rx="1.5"/><path d="M5 5h6M5 8h6M5 11h4"/>
+            </svg>
+            Policies
+          </button>
+
+          <!-- Profiles -->
+          <button class="sec-nav-item" onclick="setSecActive(this)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="11" width="14" height="3" rx="1"/><rect x="2" y="7" width="12" height="3" rx="1"/><rect x="3" y="3" width="10" height="3" rx="1"/>
+            </svg>
+            Profiles
+          </button>
+
+          <!-- System Status -->
+          <button class="sec-nav-item" onclick="setSecActive(this)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M5 7h2l1.5 3L10 5l1 2h2"/>
+            </svg>
+            System Status
+          </button>
+
+          <!-- Activity -->
+          <button class="sec-nav-item" onclick="setSecActive(this)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1,8 4,4 7,10 10,6 13,8 15,8"/>
+            </svg>
+            Activity
+          </button>
+
+          <!-- Reports -->
+          <button class="sec-nav-item" onclick="setSecActive(this)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="9" width="3" height="5" rx="0.5"/><rect x="6" y="5" width="3" height="9" rx="0.5"/><rect x="11" y="2" width="3" height="12" rx="0.5"/>
+            </svg>
+            Reports
+          </button>
+
+          <!-- Network -->
+          <button class="sec-nav-item" onclick="setSecActive(this)">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="8" cy="8" r="6"/><path d="M8 2c-2 2-3 3.8-3 6s1 4 3 6"/><path d="M8 2c2 2 3 3.8 3 6s-1 4-3 6"/><path d="M2 8h12"/>
+            </svg>
+            Network
+          </button>
+
+        </div>
+      </div><!-- /sec-nav -->
+
+      <div class="nav-content">
+        <div class="d-h1">Page title</div>
+        <p class="d-small" style="margin:8px 0 16px">60px primary rail · 192px secondary nav (<code>#f8f9fa</code> fill, <code>1px</code> right border) · active item uses orange <code>#ff5d00</code> pill · idle items are muted with a white hover.</p>
+        <button class="btn btn-primary">Primary action</button>
+      </div>
+    </div>
+
+    <script>
+      function setActive(el) {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+      }
+      function setSecActive(el) {
+        document.querySelectorAll('.sec-nav-item').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+      }
+    </script>
+  </section>
+
+  <!-- PAGE HEADER -->
+  <section>
+    <h2>Page header</h2>
+    <div class="ph-gallery">
+
+      <!-- Variant 1: Title only -->
+      <div>
+        <p class="ph-label">Simple — title only</p>
+        <div class="ph-demo">
+          <div class="ph-topbar">
+            <span class="crumb-link">Home</span><span class="crumb-sep">\</span><span class="crumb-cur">System Status</span>
+          </div>
+          <div class="ph-body">
+            <div class="ph">
+              <h1 class="ph-title">System Status</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Variant 2: Title + subtitle -->
+      <div>
+        <p class="ph-label">Standard — title + description</p>
+        <div class="ph-demo">
+          <div class="ph-topbar">
+            <span class="crumb-link">Home</span><span class="crumb-sep">\</span><span class="crumb-cur">Tenant Management</span>
+          </div>
+          <div class="ph-body">
+            <div class="ph">
+              <div>
+                <h1 class="ph-title">Tenant Management</h1>
+                <p class="ph-sub">Monitor activation, licensing, support, and firmware across all your managed tenants.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Variant 3: Title + subtitle + actions -->
+      <div>
+        <p class="ph-label">With actions — title + description + right-side controls</p>
+        <div class="ph-demo">
+          <div class="ph-topbar">
+            <span class="crumb-link">Home</span><span class="crumb-sep">\</span><span class="crumb-cur">Policies</span>
+          </div>
+          <div class="ph-body">
+            <div class="ph">
+              <div>
+                <h1 class="ph-title">Policies</h1>
+                <p class="ph-sub">Manage your security policies across all vectors.</p>
+              </div>
+              <div class="ph-actions">
+                <button class="btn btn-secondary">Export</button>
+                <button class="btn btn-primary">+ Add Policy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Variant 4: Detail / back-nav -->
+      <div>
+        <p class="ph-label">Detail page — back link + title + description</p>
+        <div class="ph-demo">
+          <div class="ph-topbar">
+            <span class="crumb-link">Home</span><span class="crumb-sep">\</span><span class="crumb-link">Policies</span><span class="crumb-sep">\</span><span class="crumb-cur">Zone Policy Detail</span>
+          </div>
+          <div class="ph-body">
+            <div class="ph">
+              <div>
+                <button class="ph-back">
+                  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Back to Policies
+                </button>
+                <h1 class="ph-title-detail">Enable IoT devices to access the internet.</h1>
+                <p class="ph-sub">Allow outbound traffic from Employee Zone</p>
+              </div>
+              <div class="ph-actions">
+                <button class="btn btn-secondary">Duplicate</button>
+                <button class="btn btn-destructive">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="d-small" style="margin-top:var(--space-md)">
+      Title: 24px / 600 for list pages · 22px / 700 / −0.031em tracking for detail pages · description: 13px muted · actions align right at the same vertical centre as the title block.
+    </p>
+  </section>
+
+  <!-- COLOR -->
+  <section>
+    <h2>Color</h2>
+    <div class="swatches">
+      <div class="swatch"><div class="chip" style="background:var(--color-bg)"></div><div class="meta"><div class="name">Background</div><div class="hex">#f8f9fa</div><div class="use">Page background</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--color-surface)"></div><div class="meta"><div class="name">Surface</div><div class="hex">#ffffff</div><div class="use">Cards, panels</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--color-surface-subtle)"></div><div class="meta"><div class="name">Surface subtle</div><div class="hex">#ececf0</div><div class="use">Muted fills, hover</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--color-text)"></div><div class="meta"><div class="name">Text primary</div><div class="hex">#1a1a1a</div><div class="use">Headings, body</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--color-text-muted)"></div><div class="meta"><div class="name">Text muted</div><div class="hex">#717182</div><div class="use">Secondary text</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--color-accent)"></div><div class="meta"><div class="name">Accent (action)</div><div class="hex">#0066cc</div><div class="use">Buttons, links</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--color-accent-hover)"></div><div class="meta"><div class="name">Accent hover</div><div class="hex">#0052a6</div><div class="use">Hover state</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--color-nav)"></div><div class="meta"><div class="name">Nav surface</div><div class="hex">#001b50</div><div class="use">Primary nav rail</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--color-nav-accent)"></div><div class="meta"><div class="name">Nav accent</div><div class="hex">#ff5d00</div><div class="use">Nav active only</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--color-success)"></div><div class="meta"><div class="name">Success</div><div class="hex">#16a34a</div><div class="use">Positive / active</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--color-warning)"></div><div class="meta"><div class="name">Warning</div><div class="hex">#d97706</div><div class="use">Caution</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--color-error)"></div><div class="meta"><div class="name">Error</div><div class="hex">#d4183d</div><div class="use">Errors, destructive</div></div></div>
+    </div>
+    <p class="d-small" style="margin-top:var(--space-md)">
+      Contrast (WCAG AA): text on background ~16.8:1 (AAA) · text muted on white ~4.6:1 (AA) · white on accent ~5.0:1 (AA) · white on navy ~15.5:1 (AAA) · white on orange ~3.0:1 (large text / icons only).
+    </p>
+  </section>
+
+  <!-- TYPOGRAPHY -->
+  <section>
+    <h2>Typography — Inter</h2>
+    <div class="type-row"><div class="type-label">Display · 30px / 700</div><div class="d-display">Zero Trust Provisioning</div></div>
+    <div class="type-row"><div class="type-label">H1 · 24px / 700 · page title</div><div class="d-h1">Tenant Management</div></div>
+    <div class="type-row"><div class="type-label">H2 · 20px / 700 · section</div><div class="d-h2">Posture Profiles</div></div>
+    <div class="type-row"><div class="type-label">H3 · 18px / 700 · card title</div><div class="d-h3">Active connectors</div></div>
+    <div class="type-row"><div class="type-label">Body · 16px / 400</div><div class="d-body">Body copy stays readable at sixty characters per line and holds a comfortable rhythm down the page.</div></div>
+    <div class="type-row"><div class="type-label">Small · 13px / 500 · tabs, controls</div><div class="d-small" style="color:var(--color-text)">Overview · Devices · Activity</div></div>
+    <div class="type-row"><div class="type-label">Micro · 11px / 600 · table headers, labels</div><div class="d-micro">Profile name · Trust level · Status</div></div>
+  </section>
+
+  <!-- SPACING -->
+  <section>
+    <h2>Spacing — 4px base</h2>
+    <div class="space-scale">
+      <div class="space-item"><span class="tag">xs · 4px</span><span class="bar" style="width:var(--space-xs)"></span></div>
+      <div class="space-item"><span class="tag">sm · 8px</span><span class="bar" style="width:var(--space-sm)"></span></div>
+      <div class="space-item"><span class="tag">md · 16px</span><span class="bar" style="width:var(--space-md)"></span></div>
+      <div class="space-item"><span class="tag">lg · 24px</span><span class="bar" style="width:var(--space-lg)"></span></div>
+      <div class="space-item"><span class="tag">xl · 32px</span><span class="bar" style="width:var(--space-xl)"></span></div>
+      <div class="space-item"><span class="tag">2xl · 48px</span><span class="bar" style="width:var(--space-2xl)"></span></div>
+    </div>
+  </section>
+
+  <!-- RADIUS + SHADOW -->
+  <section>
+    <h2>Radius &amp; elevation</h2>
+    <div class="box-grid">
+      <div class="demo-box" style="border-radius:var(--radius-sm)">radius sm · 4px</div>
+      <div class="demo-box" style="border-radius:var(--radius-md)">radius md · 8px</div>
+      <div class="demo-box" style="border-radius:var(--radius-lg)">radius lg · 16px</div>
+      <div class="demo-box" style="border-radius:var(--radius-md); box-shadow:var(--shadow-sm); border-color:transparent">shadow sm · cards</div>
+      <div class="demo-box" style="border-radius:var(--radius-md); box-shadow:var(--shadow-md); border-color:transparent">shadow md · popovers</div>
+      <div class="demo-box" style="border-radius:var(--radius-md); box-shadow:var(--shadow-lg); border-color:transparent">shadow lg · modals</div>
+    </div>
+  </section>
+
+  <!-- BUTTONS -->
+  <section>
+    <h2>Buttons</h2>
+    <div class="components">
+      <div class="btn-row">
+        <button class="btn btn-primary">Create Profile</button>
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-destructive">Delete</button>
+        <button class="btn btn-disabled" disabled>Disabled</button>
+        <a class="demo-link" href="#" style="font-size:var(--text-small)">Link button</a>
+      </div>
+      <div class="btn-row">
+        <span class="d-small" style="min-width:120px">Icon buttons</span>
+        <button class="icon-btn" aria-label="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+      </div>
+      <div class="badge-row">
+        <span class="badge success">Active</span>
+        <span class="badge warning">Pending</span>
+        <span class="badge error">Failed</span>
+        <span class="badge info">Info</span>
+        <span class="badge neutral">Neutral</span>
+        <span class="badge neutral sm">Small neutral</span>
+      </div>
+      <p class="d-body">Body text can contain <a class="demo-link" href="#">an inline link</a> styled with the action blue.</p>
+    </div>
+  </section>
+
+  <!-- INPUT CONTROLS -->
+  <section>
+    <h2>Input controls</h2>
+    <div class="controls-grid">
+      <div class="ctrl">
+        <span class="lbl">Textbox</span>
+        <input class="inp" type="text" placeholder="Enter profile name" />
+      </div>
+      <div class="ctrl">
+        <span class="lbl">Textbox — focus</span>
+        <input class="inp" type="text" value="Posture profile" style="border-color:var(--color-accent); box-shadow:0 0 0 3px rgba(0,102,204,0.4)" />
+      </div>
+      <div class="ctrl">
+        <span class="lbl">Textbox — invalid</span>
+        <input class="inp invalid" type="text" value="bad value" />
+      </div>
+      <div class="ctrl">
+        <span class="lbl">Textbox — disabled</span>
+        <input class="inp" type="text" value="Read only" disabled />
+      </div>
+      <div class="ctrl">
+        <span class="lbl">Dropdown (Select)</span>
+        <div class="select-wrap">
+          <select class="inp">
+            <option>High trust</option>
+            <option>Medium trust</option>
+            <option>Low trust</option>
+          </select>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="ctrl">
+        <span class="lbl">Search control</span>
+        <div class="search-wrap">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input class="inp" type="search" placeholder="Search objects…" />
+        </div>
+      </div>
+      <div class="ctrl" style="grid-column: span 1;">
+        <span class="lbl">Autocomplete (Command)</span>
+        <div class="ac">
+          <div class="search-wrap">
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input class="inp" id="ac-input" type="text" placeholder="Search tenants…" autocomplete="off" />
+          </div>
+          <div class="ac-menu" id="ac-menu">
+            <div class="ac-opt active" data-name="Acme Corp">Acme Corp <svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+            <div class="ac-opt" data-name="Globex">Globex</div>
+            <div class="ac-opt" data-name="Initech">Initech</div>
+            <div class="ac-empty" id="ac-empty" style="display:none">No tenant found.</div>
+          </div>
+        </div>
+      </div>
+      <div class="ctrl" style="grid-column: 1 / -1;">
+        <span class="lbl">Textarea</span>
+        <textarea class="inp" placeholder="Description…"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARDS -->
+  <section>
+    <h2>Cards</h2>
+    <div class="card-gallery">
+
+      <div class="c c-base">
+        <div class="head">Base panel</div>
+        <div class="body">radius lg · shadow sm · wraps tables &amp; page sections.</div>
+      </div>
+
+      <div class="c c-content">
+        <p class="ct">Content card</p>
+        <p class="cd">radius lg with internal padding. General grouped content.</p>
+      </div>
+
+      <div class="c c-stat">
+        <div class="top">
+          <div class="tile" style="background:#dcfce7"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" width="20" height="20"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
+          <span class="trend">+2.3%</span>
+        </div>
+        <div class="k">Tenant Health</div>
+        <div class="v">98.5%</div>
+        <div class="sub">CPU 15% · Mem 42%</div>
+      </div>
+
+      <div class="c c-subtle">
+        <p class="ct">Subtle / nested</p>
+        <p class="cd">Gray fill, no shadow. Sub-sections inside a panel.</p>
+      </div>
+
+      <div class="c c-select" onclick="document.querySelectorAll('.c-select').forEach(e=>e.classList.remove('sel'));this.classList.add('sel')">
+        <p class="ct">Selectable card</p>
+        <p class="cd">2px border; turns accent blue when selected.</p>
+      </div>
+      <div class="c c-select sel" onclick="document.querySelectorAll('.c-select').forEach(e=>e.classList.remove('sel'));this.classList.add('sel')">
+        <p class="ct">Selected</p>
+        <p class="cd">Accent border + tint. Click the other to toggle.</p>
+      </div>
+
+      <div class="c c-click">
+        <p class="ct">Clickable list card</p>
+        <p class="cd">Hover to raise the shadow. Navigable rows.</p>
+      </div>
+
+      <div class="c c-info">
+        <p class="ct" style="color:var(--color-accent)">Info callout</p>
+        <p class="cd">Blue tint for informational notes.</p>
+      </div>
+
+      <div class="c c-warn">
+        <p class="ct" style="color:#c2410c">Attention banner</p>
+        <p class="cd">Orange→amber gradient for warnings &amp; CTAs.</p>
+      </div>
+
+      <div class="c c-modal">
+        <p class="ct">Modal surface</p>
+        <p class="cd">radius lg · shadow lg. Dialogs &amp; drawers.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- COMPOSED CARDS -->
+  <section>
+    <h2>Composed cards</h2>
+    <div class="composed-gallery">
+
+      <!-- Status-list card -->
+      <div class="cc">
+        <div class="card-head hdr-mb">
+          <div class="tile" style="background:#dcfce7"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" width="20" height="20"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
+          <div><p class="name">Service Health</p></div>
+        </div>
+        <div class="srow"><span class="k">ZT Connector</span><span class="v">Online</span></div>
+        <div class="srow"><span class="k">Cloud connectivity</span><span class="v">Connected</span></div>
+        <div class="srow"><span class="k">Global edge network</span><span class="v">Online</span></div>
+      </div>
+
+      <!-- Metric-stack card -->
+      <div class="cc">
+        <div class="card-head hdr-mb">
+          <div class="tile" style="background:#dbeafe"><svg viewBox="0 0 24 24" fill="none" stroke="#0066cc" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg></div>
+          <div><p class="name">Web traffic<span class="suffix">Last 30 days</span></p></div>
+        </div>
+        <div class="metric">
+          <div class="k">Allowed</div>
+          <div class="vrow"><span class="v">3,084,358</span><span class="trend-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg>+32%</span></div>
+        </div>
+        <div class="metric" style="margin-bottom:0">
+          <div class="k">Non-Compliance Blocks</div>
+          <div class="vrow"><span class="v">82,487</span><span class="trend-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg>+18,690%</span></div>
+        </div>
+      </div>
+
+      <!-- Compact stat card -->
+      <div class="cc cc-stat">
+        <div class="card-head hdr-mb">
+          <div class="tile" style="background:#fee2e2"><svg viewBox="0 0 24 24" fill="none" stroke="#d4183d" stroke-width="2" width="20" height="20"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg></div>
+          <div><p class="name">Total Blocked</p></div>
+        </div>
+        <div class="big accent">1,237</div>
+        <div class="tr">↑ 14% vs prior period</div>
+      </div>
+
+      <!-- Resource detail card -->
+      <div class="cc cc-wide">
+        <div class="card-head-row">
+          <div class="card-head">
+            <div class="tile" style="background:#dbeafe"><svg viewBox="0 0 24 24" fill="none" stroke="#0066cc" stroke-width="2" width="18" height="18"><rect x="3" y="4" width="18" height="7" rx="1"/><rect x="3" y="13" width="18" height="7" rx="1"/><path d="M7 7.5h.01M7 16.5h.01"/></svg></div>
+            <div>
+              <p class="eyebrow">Secure Remote Access</p>
+              <p class="name">ZTP Connector</p>
+            </div>
+          </div>
+          <span class="status-pill"><span class="dotg"></span>Online</span>
+        </div>
+        <div class="res-divider"></div>
+        <div class="meta-grid">
+          <div><p class="ml">Private Networks</p><p class="mv">Employee Zone</p></div>
+          <div><p class="ml">IP Range</p><p class="mv">192.10.10.0/16</p></div>
+        </div>
+        <div>
+          <p class="ml" style="margin-bottom:8px">Internal Domains</p>
+          <div class="chips">
+            <span class="chip2">dentrix.local</span>
+            <span class="chip2">erp.riverside.local</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature / highlight panel -->
+      <div class="feat-panel cc-wide">
+        <div class="card-head-row" style="margin-bottom:var(--space-md)">
+          <div class="card-head">
+            <div class="tile" style="background:#dcfce7"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" width="20" height="20"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
+            <div><p class="name">Enabled by Default</p></div>
+          </div>
+          <a class="demo-link" href="#" style="font-size:var(--text-small)">View Configuration</a>
+        </div>
+        <div class="feat-row"><span class="dotg"></span><div><p class="ft">Threat Protection</p><p class="fd">IPS, Anti-Virus, and App Control block malicious traffic.</p></div></div>
+        <div class="feat-row"><span class="dotg"></span><div><p class="ft">Secure Internet Access</p><p class="fd">Safe browsing via CFS, Botnet, and DNS filtering.</p></div></div>
+        <div class="feat-row"><span class="dotg"></span><div><p class="ft">Network Zones</p><p class="fd">Employee, Guest, and Internet zones are segmented.</p></div></div>
+      </div>
+
+      <!-- Branded hero card -->
+      <div class="hero-card">
+        <p class="ht">Branded hero card</p>
+        <p class="hd">Navy → blue gradient for onboarding and promotional emphasis.</p>
+      </div>
+
+      <!-- Download / Action CTA strip -->
+      <div class="cc cc-wide" style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div class="tile" style="background:var(--neutral-100);flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="var(--neutral-500)" stroke-width="2" width="20" height="20"><path d="M12 3v13M6 11l6 6 6-6"/><path d="M4 20h16"/></svg></div>
+          <div>
+            <h3 style="margin:0 0 2px">Download Unified Client</h3>
+            <p style="font-size:var(--text-xs);color:var(--neutral-500);margin:0">Deploy the unified security agent to all enabled tenants to ensure full zero trust compliance.</p>
+          </div>
+        </div>
+        <button class="btn btn-secondary" style="white-space:nowrap;flex-shrink:0">View Details</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DASHBOARD WIDGET -->
+  <section>
+    <h2>Dashboard widget</h2>
+    <p style="font-size:var(--text-small);color:var(--color-text-muted);margin:0 0 var(--space-lg)">
+      Atomic widget shell used in dashboard grid layouts. Header carries the title (left) and an optional period dropdown (right). Footer carries an optional "View all" link. Body is a flex-1 slot accepting any content.
+    </p>
+
+    <!-- anatomy labels -->
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-lg)">
+
+      <!-- Variant A: period dropdown + view all footer -->
+      <div>
+        <p style="font-size:var(--text-xs);font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);margin:0 0 8px">With period dropdown &amp; footer</p>
+        <div class="card" style="display:flex;flex-direction:column;overflow:hidden;height:260px;padding:0;">
+          <!-- Header -->
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:16px 20px 12px;flex-shrink:0;border-bottom:1px solid var(--color-border);">
+            <h3 style="font-size:var(--text-small);font-weight:700;color:var(--color-text);margin:0;">Blocked Threats</h3>
+            <select style="font-size:var(--text-xs);font-weight:500;color:var(--color-text);background:var(--color-surface);border:1px solid var(--color-border);border-radius:8px;padding:4px 24px 4px 10px;cursor:pointer;outline:none;appearance:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236b7280%22 stroke-width=%222%22%3E%3Cpath d=%22M6 9l6 6 6-6%22/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 6px center;background-size:12px;">
+              <option>Last 30 days</option>
+              <option>Last 7 days</option>
+              <option>Yesterday</option>
+            </select>
+          </div>
+          <!-- Body -->
+          <div style="flex:1;min-height:0;padding:16px 20px;overflow:auto;display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span style="font-size:11px;color:var(--color-text);width:160px;flex-shrink:0;">Unauthorized Access Attempt</span>
+              <div style="flex:1;background:var(--neutral-100);border-radius:999px;height:6px;overflow:hidden;"><div style="height:100%;width:100%;background:var(--neutral-400);border-radius:999px;"></div></div>
+              <span style="font-size:11px;font-weight:600;color:var(--color-text);width:28px;text-align:right;">584</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span style="font-size:11px;color:var(--color-text);width:160px;flex-shrink:0;">Non-Compliant Device Blocked</span>
+              <div style="flex:1;background:var(--neutral-100);border-radius:999px;height:6px;overflow:hidden;"><div style="height:100%;width:77%;background:var(--neutral-400);border-radius:999px;"></div></div>
+              <span style="font-size:11px;font-weight:600;color:var(--color-text);width:28px;text-align:right;">449</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span style="font-size:11px;color:var(--color-text);width:160px;flex-shrink:0;">C2 Attempts</span>
+              <div style="flex:1;background:var(--neutral-100);border-radius:999px;height:6px;overflow:hidden;"><div style="height:100%;width:9%;background:var(--neutral-400);border-radius:999px;"></div></div>
+              <span style="font-size:11px;font-weight:600;color:var(--color-text);width:28px;text-align:right;">51</span>
+            </div>
+          </div>
+          <!-- Footer -->
+          <div style="flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;padding:10px 20px;border-top:1px solid var(--color-border);">
+            <a class="demo-link" href="#" style="font-size:var(--text-small);display:inline-flex;align-items:center;gap:4px;">
+              View all
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Variant B: static sub-label, no footer -->
+      <div>
+        <p style="font-size:var(--text-xs);font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);margin:0 0 8px">Actions breakdown — stacked bar rows</p>
+        <div class="card" style="display:flex;flex-direction:column;overflow:hidden;height:260px;padding:0;">
+          <!-- Header -->
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:16px 20px 12px;flex-shrink:0;border-bottom:1px solid var(--color-border);">
+            <h3 style="font-size:var(--text-small);font-weight:700;color:var(--color-text);margin:0;">Actions Breakdown</h3>
+            <select style="font-size:var(--text-xs);font-weight:500;color:var(--color-text);background:var(--color-surface);border:1px solid var(--color-border);border-radius:8px;padding:4px 24px 4px 10px;cursor:pointer;outline:none;appearance:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236b7280%22 stroke-width=%222%22%3E%3Cpath d=%22M6 9l6 6 6-6%22/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 6px center;background-size:12px;">
+              <option>Last 30 days</option>
+              <option>Last 7 days</option>
+              <option>Yesterday</option>
+            </select>
+          </div>
+          <!-- Body -->
+          <div style="flex:1;min-height:0;padding:16px 20px;display:flex;flex-direction:column;gap:14px;">
+            <!-- Legend -->
+            <div style="display:flex;align-items:center;gap:16px;flex-shrink:0;">
+              <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--color-text-muted);"><span style="width:12px;height:8px;border-radius:3px;background:#22c55e;display:inline-block;"></span>Allowed</span>
+              <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--color-text-muted);"><span style="width:12px;height:8px;border-radius:3px;background:#ef4444;display:inline-block;"></span>Blocked</span>
+            </div>
+            <!-- Rows -->
+            <div style="display:flex;align-items:center;gap:16px;">
+              <span style="font-size:11px;font-weight:500;color:var(--color-text);width:140px;flex-shrink:0;">Global Services LLC</span>
+              <div style="flex:1;display:flex;height:10px;border-radius:999px;overflow:hidden;">
+                <div style="width:85%;background:#22c55e;border-radius:999px 0 0 999px;"></div>
+                <div style="width:15%;background:#ef4444;border-radius:0 999px 999px 0;"></div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;">
+              <span style="font-size:11px;font-weight:500;color:var(--color-text);width:140px;flex-shrink:0;">Enterprise Solutions</span>
+              <div style="flex:1;display:flex;height:10px;border-radius:999px;overflow:hidden;">
+                <div style="width:84%;background:#22c55e;border-radius:999px 0 0 999px;"></div>
+                <div style="width:16%;background:#ef4444;border-radius:0 999px 999px 0;"></div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;">
+              <span style="font-size:11px;font-weight:500;color:var(--color-text);width:140px;flex-shrink:0;">Acme Corporation</span>
+              <div style="flex:1;display:flex;height:10px;border-radius:999px;overflow:hidden;">
+                <div style="width:80%;background:#22c55e;border-radius:999px 0 0 999px;"></div>
+                <div style="width:20%;background:#ef4444;border-radius:0 999px 999px 0;"></div>
+              </div>
+            </div>
+          </div>
+          <!-- No footer for this variant -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Anatomy callouts -->
+    <div style="margin-top:var(--space-lg);padding:var(--space-md) var(--space-lg);background:var(--neutral-50);border:1px solid var(--color-border);border-radius:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-md);">
+      <div>
+        <p style="font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);margin:0 0 4px">Header</p>
+        <p style="font-size:var(--text-xs);color:var(--color-text-muted);margin:0">Title (14px/500) left · Period dropdown right · optional static <code>sub</code> label in muted text</p>
+      </div>
+      <div>
+        <p style="font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);margin:0 0 4px">Body</p>
+        <p style="font-size:var(--text-xs);color:var(--color-text-muted);margin:0"><code>flex-1 min-h-0</code> — accepts any chart, table, or list. Scroll handled per-widget via <code>bodyClass</code>.</p>
+      </div>
+      <div>
+        <p style="font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted);margin:0 0 4px">Footer</p>
+        <p style="font-size:var(--text-xs);color:var(--color-text-muted);margin:0">Optional · 1px top border · "View all →" link right-aligned · renders only when <code>onViewAll</code> is provided.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATA TABLE -->
+  <section>
+    <h2>Data table</h2>
+    <div class="table-panel">
+      <!-- Table toolbar -->
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--color-border);background:var(--color-surface);">
+        <div style="position:relative;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" width="14" height="14" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input placeholder="Search by user…" style="padding-left:32px;height:34px;width:220px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);font-family:var(--font-body);font-size:var(--text-small);color:var(--color-text);outline:none;">
+        </div>
+        <div style="width:1px;height:20px;background:var(--color-border);"></div>
+        <button style="display:inline-flex;align-items:center;gap:6px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);padding:0 12px;height:34px;font-family:var(--font-body);font-size:var(--text-small);cursor:pointer;">
+          <span style="color:var(--color-text-muted)">Action:</span>
+          <span style="color:var(--color-text);font-weight:500;">All</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <button style="display:inline-flex;align-items:center;gap:6px;border-radius:8px;border:1px solid var(--color-border);background:var(--color-surface);padding:0 12px;height:34px;font-family:var(--font-body);font-size:var(--text-small);cursor:pointer;">
+          <span style="color:var(--color-text-muted)">Policy type:</span>
+          <span style="color:var(--color-text);font-weight:500;">All</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+      </div>
+      <table class="ds">
+        <thead>
+          <tr>
+            <th>Timestamp</th><th>Threat Type</th><th>User</th><th>Source IP</th><th>Policy Matched</th><th>Severity</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">14:02:11</td><td>C2 Attempt</td><td>j.reyes</td><td class="mono">10.4.2.18</td><td class="muted">Block-Outbound</td><td><span class="sev crit">Critical</span></td><td><span class="badge error">Blocked</span></td></tr>
+          <tr><td class="mono">13:58:40</td><td>Unauthorized Access</td><td>m.okafor</td><td class="mono">10.4.7.91</td><td class="muted">Zero-Trust-Default</td><td><span class="sev high">High</span></td><td><span class="badge error">Blocked</span></td></tr>
+          <tr><td class="mono">13:51:09</td><td>DNS-Based Threat</td><td>s.lindqvist</td><td class="mono">10.4.3.55</td><td class="muted">DNS-Filtering</td><td><span class="sev med">Medium</span></td><td><span class="badge success">Allowed</span></td></tr>
+          <tr><td class="mono">13:47:22</td><td>Geo / Location Block</td><td>a.haidar</td><td class="mono">10.4.9.12</td><td class="muted">Geo-Policy</td><td><span class="sev med">Medium</span></td><td><span class="badge error">Blocked</span></td></tr>
+        </tbody>
+      </table>
+      <!-- Pagination -->
+      <div class="table-foot">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <span>Showing 1–10 of 30 records</span>
+          <span style="color:var(--color-border)">|</span>
+          <button style="display:inline-flex;align-items:center;gap:4px;background:none;border:none;font-family:var(--font-body);font-size:var(--text-small);color:var(--color-text);cursor:pointer;">10 per page <svg viewBox="0 0 16 16" fill="none" width="14" height="14"><path d="M8 12L14 5.3H2L8 12Z" fill="currentColor"/></svg></button>
+        </div>
+        <div class="pager">
+          <button class="icon-btn" disabled aria-label="Previous"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <button class="icon-btn" aria-label="Next"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHARTS -->
+  <section>
+    <h2>Charts</h2>
+    <div class="chart-grid">
+
+      <!-- Multi-series line chart -->
+      <div class="chart-card full">
+        <div class="card-head hdr-mb">
+          <div class="tile" style="background:#dbeafe"><svg viewBox="0 0 24 24" fill="none" stroke="#0066cc" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg></div>
+          <div><p class="name">Traffic trend<span class="suffix">Last 30 days</span></p></div>
+        </div>
+        <div class="chart-legend">
+          <span><span class="sw" style="background:#10b981"></span>Global Services LLC</span>
+          <span><span class="sw" style="background:#0ea5e9"></span>Enterprise Solutions</span>
+          <span><span class="sw" style="background:#0066cc"></span>Riverside Dental</span>
+        </div>
+        <svg viewBox="0 0 820 240" preserveAspectRatio="none" style="width:100%;height:200px">
+          <!-- gridlines + y labels -->
+          <g>
+            <line x1="52" y1="20" x2="804" y2="20" stroke="#f1f5f9" stroke-width="1"/><text x="44" y="23" text-anchor="end" fill="#99a1af" font-size="10">200k</text>
+            <line x1="52" y1="70" x2="804" y2="70" stroke="#f1f5f9" stroke-width="1"/><text x="44" y="73" text-anchor="end" fill="#99a1af" font-size="10">150k</text>
+            <line x1="52" y1="120" x2="804" y2="120" stroke="#f1f5f9" stroke-width="1"/><text x="44" y="123" text-anchor="end" fill="#99a1af" font-size="10">100k</text>
+            <line x1="52" y1="170" x2="804" y2="170" stroke="#f1f5f9" stroke-width="1"/><text x="44" y="173" text-anchor="end" fill="#99a1af" font-size="10">50k</text>
+            <line x1="52" y1="210" x2="804" y2="210" stroke="#e2e8f0" stroke-width="1"/><text x="44" y="213" text-anchor="end" fill="#99a1af" font-size="10">0</text>
+          </g>
+          <!-- x labels -->
+          <text x="52" y="232" text-anchor="middle" fill="#99a1af" font-size="10">Day 1</text>
+          <text x="428" y="232" text-anchor="middle" fill="#99a1af" font-size="10">Day 15</text>
+          <text x="804" y="232" text-anchor="middle" fill="#99a1af" font-size="10">Day 30</text>
+          <!-- series -->
+          <path d="M52,130 L188,110 L324,140 L460,80 L596,100 L720,60 L804,72" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M52,165 L188,150 L324,158 L460,140 L596,150 L720,128 L804,135" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M52,190 L188,182 L324,188 L460,176 L596,180 L720,168 L804,170" fill="none" stroke="#0066cc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- hover guide -->
+          <line x1="460" y1="20" x2="460" y2="210" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
+          <circle cx="460" cy="80" r="3.5" fill="#fff" stroke="#10b981" stroke-width="2"/>
+          <circle cx="460" cy="140" r="3.5" fill="#fff" stroke="#0ea5e9" stroke-width="2"/>
+          <circle cx="460" cy="176" r="3.5" fill="#fff" stroke="#0066cc" stroke-width="2"/>
+        </svg>
+      </div>
+
+      <!-- Bar chart -->
+      <div class="chart-card">
+        <div class="card-head hdr-mb">
+          <div class="tile" style="background:#fee2e2"><svg viewBox="0 0 24 24" fill="none" stroke="#d4183d" stroke-width="2" width="20" height="20"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg></div>
+          <div><p class="name">Threats by type</p></div>
+        </div>
+        <svg viewBox="0 0 360 200" style="width:100%;height:180px">
+          <g>
+            <line x1="40" y1="20" x2="360" y2="20" stroke="#f1f5f9" stroke-width="1"/>
+            <line x1="40" y1="70" x2="360" y2="70" stroke="#f1f5f9" stroke-width="1"/>
+            <line x1="40" y1="120" x2="360" y2="120" stroke="#f1f5f9" stroke-width="1"/>
+            <line x1="40" y1="170" x2="360" y2="170" stroke="#e2e8f0" stroke-width="1"/>
+            <text x="32" y="23" text-anchor="end" fill="#99a1af" font-size="10">600</text>
+            <text x="32" y="123" text-anchor="end" fill="#99a1af" font-size="10">200</text>
+            <text x="32" y="173" text-anchor="end" fill="#99a1af" font-size="10">0</text>
+          </g>
+          <rect x="60" y="73" width="40" height="97" rx="3" fill="#f97316"/>
+          <rect x="120" y="95" width="40" height="75" rx="3" fill="#f97316"/>
+          <rect x="180" y="137" width="40" height="33" rx="3" fill="#d97706"/>
+          <rect x="240" y="161" width="40" height="9" rx="3" fill="#ef4444"/>
+          <rect x="300" y="155" width="40" height="15" rx="3" fill="#ef4444"/>
+        </svg>
+      </div>
+
+      <!-- Sparklines -->
+      <div class="chart-card">
+        <div class="card-head hdr-mb">
+          <div class="tile" style="background:#dcfce7"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" width="20" height="20"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+          <div><p class="name">Sparklines</p></div>
+        </div>
+        <div class="spark-row" style="margin-bottom:12px">
+          <span class="lbl">CPU 15%</span>
+          <svg viewBox="0 0 100 32" preserveAspectRatio="none" style="flex:1;height:32px">
+            <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#16a34a" stop-opacity="0.2"/><stop offset="100%" stop-color="#16a34a" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0 24 C 20 26, 40 12, 60 16 C 80 20, 90 13, 100 17 L 100 32 L 0 32 Z" fill="url(#g1)"/>
+            <path d="M0 24 C 20 26, 40 12, 60 16 C 80 20, 90 13, 100 17" fill="none" stroke="#16a34a" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="spark-row">
+          <span class="lbl">Mem 42%</span>
+          <svg viewBox="0 0 100 32" preserveAspectRatio="none" style="flex:1;height:32px">
+            <defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2563eb" stop-opacity="0.2"/><stop offset="100%" stop-color="#2563eb" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0 18 C 25 22, 45 14, 70 18 C 85 20, 92 12, 100 15 L 100 32 L 0 32 Z" fill="url(#g2)"/>
+            <path d="M0 18 C 25 22, 45 14, 70 18 C 85 20, 92 12, 100 15" fill="none" stroke="#2563eb" stroke-width="1.5"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TOOLTIPS -->
+  <section>
+    <h2>Tooltips</h2>
+    <div class="tip-demos">
+      <div class="demo-wrap">
+        <span class="demo-cap">Label tooltip — control hints</span>
+        <span class="tip-label">Reset to defaults</span>
+      </div>
+      <div class="demo-wrap">
+        <span class="demo-cap">Data tooltip — chart hover</span>
+        <div class="tip-data">
+          <p class="th">Day 15</p>
+          <div class="row"><span class="dot" style="background:#10b981"></span><span class="nm">Global Services LLC</span><span class="val">182k</span></div>
+          <div class="row"><span class="dot" style="background:#0ea5e9"></span><span class="nm">Enterprise Solutions</span><span class="val">141k</span></div>
+          <div class="row"><span class="dot" style="background:#0066cc"></span><span class="nm">Riverside Dental</span><span class="val">96k</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="page">
+    Generated by the Design System Generator skill from the existing ZTP codebase. Edit design.md to change the system, then regenerate this page.
+  </footer>
+
+</div>
+<script>
+  (function () {
+    var input = document.getElementById('ac-input');
+    var empty = document.getElementById('ac-empty');
+    if (!input) return;
+    var opts = Array.prototype.slice.call(document.querySelectorAll('#ac-menu .ac-opt'));
+    input.addEventListener('input', function () {
+      var q = input.value.trim().toLowerCase();
+      var visible = 0;
+      opts.forEach(function (o) {
+        var match = o.getAttribute('data-name').toLowerCase().indexOf(q) !== -1;
+        o.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+      empty.style.display = visible ? 'none' : '';
+    });
+  })();
+</script>
+</body>
+</html>
