@@ -17,7 +17,7 @@ function figmaAssetResolver() {
 }
 
 export default defineConfig({
-  base: '/ZTP-phase-3-/',
+  base: '/ZTP-Phase3-Ver1-Jun24/',
   plugins: [
     figmaAssetResolver(),
     // The React and Tailwind plugins are both required for Make, even if
