@@ -17,7 +17,7 @@ export const appIds = [
 ];
 
 export const appLabels = [
-  'Dashboard',
+  'MSP Dashboard',
   'Inventory', 
   'Admin Setting',
   'ZTP',

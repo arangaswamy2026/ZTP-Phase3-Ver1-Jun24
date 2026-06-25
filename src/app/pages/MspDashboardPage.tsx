@@ -200,7 +200,7 @@ export function MspDashboardPage() {
 
   return (
     <div className="space-y-6 pb-10">
-      <PageHeader title="Dashboard" />
+      <PageHeader title="MSP Dashboard" />
 
       {/* Uniform widget grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
